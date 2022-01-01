@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas Ajax - 05111940000221</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .bitdark {
+            opacity: 0.5;
+            transition: all 0.25s;
+            max-height: 500px;
+        }
+
+        .bitdark:hover {
+            opacity: 1;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="flex items-center justify-center ">
+            <h1 class="font-bold text-7xl">
+                AJAX
+            </h1>
+        </div>
+        <div class="flex items-center justify-center ">
+            <h2 class="font-semibold text-2xl">Rahadian Adjie Mahesa - 05111940000221 - PWEB D 2021</h2>
+        </div>
+    </header>
+    <div class="pt-10 flex items-center justify-center">
+        <div class="w-3/12">
+            <div onclick="getText()" class="text-center bg-red-500 text-white rounded px-4 py-2 cursor-pointer">Get data dari HTML
+            </div>
+            <p id="text-container"></p><br><br>
+            <div>
+                <p>Pilih Provinsi</p>
+                <select id="province" class="p-2 rounded border border-gray-300 bg-white w-full "
+                    onchange="loadKabKota(document.getElementById('province').value)">
+                </select><br><br>
+                <p>Pilih Kota</p>
+                <select id="city" class="p-2 rounded border border-gray-300 bg-white w-full "
+                    onchange="loadKabKota(document.getElementById('province').value)">
+                </select>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+    var XMLHttpRequestObject = false;
+    if (window.XMLHttpRequest) {
+        XMLHttpRequestObject = new XMLHttpRequest();
+    } else if (window.ActiveXObject) {
+        XMLHttpRequestObject = new ActiveXObject("Microsoft.XMLHttp");
+    }
+    function getText() {
+        if (XMLHttpRequestObject) {
+            let url = "text.html"
+            var obj = document.getElementById("text-container");
+            XMLHttpRequestObject.open("GET", url);
+            XMLHttpRequestObject.onreadystatechange = function () {
+                if (XMLHttpRequestObject.readyState == 4 && XMLHttpRequestObject.status == 200) {
+                    obj.innerHTML = XMLHttpRequestObject.responseText;
+                    console.log(XMLHttpRequestObject.responseText)
+                }
+            }
+
+            XMLHttpRequestObject.send(null);
+        }
+        return false
+    }
+    function loadProvinsi() {
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function () {
+            console.log(JSON.parse(this.responseText))
+            const myObj = JSON.parse(this.responseText);
+            let html = "<option>Pilih Provinsi</option>";
+            let idx = 0;
+            for (let x of Object.keys(myObj)) {
+                html += "<option";
+                html += ` value='${idx}'>`;
+                html += x;
+                html += "</option>";
+                idx += 1;
+            }
+            document.getElementById("province").innerHTML = html;
+        }
+        xhttp.open("GET", "daerah.json", true);
+        xhttp.send();
+    }
+    loadProvinsi()
+    function loadKabKota(idx) {
+        console.log(idx)
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function () {
+            const myObj = JSON.parse(this.responseText);
+            let html = "<option>Pilih Kabupaten/Kota</option>";
+            for (let x of Object.values(myObj)[idx]) {
+                html += "<option>";
+                html += x;
+                html += "</option>";
+            }
+            console.log(html)
+            document.getElementById("city").innerHTML = html;
+        }
+        xhttp.open("GET", "daerah.json", true);
+        xhttp.send();
+    }
+</script>
